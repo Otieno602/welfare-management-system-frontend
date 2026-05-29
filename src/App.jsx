@@ -1,16 +1,53 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
+
 import Members from "./pages/Members";
+import Attendance from "./pages/Attendance";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Members />} />
-        <Route path="/members" element={<Members />} />
-      </Routes>
+      <div className="min-h-screen bg-gray-50">
+
+        {/* Navigation */}
+        <nav className="bg-white shadow-sm border-b px-4 py-3 flex gap-4">
+          
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? "text-blue-600 font-semibold"
+                : "text-gray-600"
+            }
+          >
+            Members
+          </NavLink>
+
+          <NavLink
+            to="/attendance"
+            className={({ isActive }) =>
+              isActive
+                ? "text-blue-600 font-semibold"
+                : "text-gray-600"
+            }
+          >
+            Attendance
+          </NavLink>
+
+        </nav>
+
+        {/* Pages */}
+        <Routes>
+          <Route path="/" element={<Members />} />
+
+          <Route
+            path="/attendance"
+            element={<Attendance />}
+          />
+        </Routes>
+
+      </div>
     </Router>
   );
 }
 
 export default App;
-

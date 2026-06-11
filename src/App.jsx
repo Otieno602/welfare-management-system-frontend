@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-do
 import Members from "./pages/Members";
 import Attendance from "./pages/Attendance";
 import AttendanceHistory from "./pages/AttendanceHistory";
+import FinancialRecords from "./pages/FinancialRecords";
 
 function App() {
   return (
@@ -45,6 +46,16 @@ function App() {
             History
           </NavLink>
 
+          <NavLink to="/financial-records"
+                   className={({ isActive }) =>
+                      isActive
+                        ? "text-blue-600 font-semibold"
+                        : "text-gray-600"
+                   }
+          >
+            Financial Records
+          </NavLink>
+
         </nav>
 
         {/* Pages */}
@@ -59,6 +70,11 @@ function App() {
           <Route
             path="/attendance-history"
             element={<AttendanceHistory />}
+          />
+
+          <Route
+            path="/financial-records"
+            element={<FinancialRecords />}
           />
         </Routes>
 

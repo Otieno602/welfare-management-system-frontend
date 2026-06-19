@@ -14,6 +14,7 @@ const FinancialRecords = () => {
   const [expandedRecord, setExpandedRecord] = useState(null);
   const [editingRecord, setEditingRecord] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
 
   const API_URL = "http://localhost:5000/api/financial-records";
 
@@ -124,11 +125,16 @@ const FinancialRecords = () => {
     };
   };
 
-  const filteredRecords = records.filter(
-    (record) =>
+  const filteredRecords = records.filter((record) => {
+    const matchesSearch =
       record.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.type.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+      record.type.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesFilter =
+      filterType === "all" ? true : record.type === filterType;
+
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
@@ -186,6 +192,8 @@ const FinancialRecords = () => {
         </button>
       </form>
 
+      {/* Search Bar */}
+
       <input
         type="text"
         placeholder="Search financial records..."
@@ -193,6 +201,46 @@ const FinancialRecords = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="w-full border rounded p-2 mb-4"
       />
+
+      {/* Filter Buttons */}
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        <button
+          onClick={() => setFilterType("all")}
+          className={`px-4 py-2 rounded ${
+            filterType === "all" ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+        >
+          All
+        </button>
+
+        <button
+          onClick={() => setFilterType("monthly")}
+          className={`px-4 py-2 rounded ${
+            filterType === "monthly" ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+        >
+          Monthly
+        </button>
+
+        <button
+          onClick={() => setFilterType("special")}
+          className={`px-4 py-2 rounded ${
+            filterType === "special" ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+        >
+          Special
+        </button>
+
+        <button
+          onClick={() => setFilterType("fine")}
+          className={`px-4 py-2 rounded ${
+            filterType === "fine" ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+        >
+          Fines
+        </button>
+      </div>
 
       {/* Records */}
 

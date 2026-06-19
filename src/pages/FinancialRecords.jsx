@@ -91,6 +91,38 @@ const FinancialRecords = () => {
     }
   };
 
+  const calculateSummary = (record) => {
+    const expectedAmount = record.amount * record.payments.length;
+
+    const collectedAmount = record.payments.reduce(
+      (total, payment) => total + (payment.amountPaid || 0),
+      0,
+    );
+
+    const outstandingAmount = expectedAmount - collectedAmount;
+
+    const paidMembers = record.payments.filter(
+      (payment) => payment.status === "paid",
+    ).length;
+
+    const partialMembers = record.payments.filter(
+      (payment) => payment.status === "partial",
+    ).length;
+
+    const unpaidMembers = record.payments.filter(
+      (payment) => payment.status === "unpaid",
+    ).length;
+
+    return {
+      expectedAmount,
+      collectedAmount,
+      outstandingAmount,
+      paidMembers,
+      partialMembers,
+      unpaidMembers,
+    };
+  };
+
   return (
     <div className="p-4 max-w-5xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Financial Records</h1>
@@ -150,143 +182,184 @@ const FinancialRecords = () => {
       {/* Records */}
 
       <div className="space-y-4">
-        {records.map((record) => (
-          <div
-            key={record._id}
-            className="border rounded-lg p-4 bg-white shadow-sm"
-          >
-            <h2 className="font-semibold text-lg">{record.title}</h2>
+        {records.map((record) => {
+          const summary = calculateSummary(record);
 
-            <p>Amount: Ksh {record.amount}</p>
-
-            <p>Type: {record.type}</p>
-
-            <p>
-              Deadline:{" "}
-              {record.deadline
-                ? new Date(record.deadline).toLocaleDateString()
-                : "N/A"}
-            </p>
-
-            <button
-              onClick={() => togglePayments(record._id)}
-              className="mt-3 text-blue-600 hover:text-blue-800"
+          return (
+            <div
+              key={record._id}
+              className="border rounded-lg p-4 bg-white shadow-sm"
             >
-              {expandedRecord === record._id
-                ? "Hide Payments"
-                : "View Payments"}
-            </button>
+              <h2 className="font-semibold text-lg">{record.title}</h2>
 
-            <button
-              onClick={() => setEditingRecord({ ...record })}
-              className="ml-4 text-yellow-600 hover:text-yellow-800"
-            >
-              Edit Payments
-            </button>
+              <p>Amount: Ksh {record.amount}</p>
 
-            {editingRecord?._id === record._id && (
-              <div className="mt-4 border-t pt-4 space-y-3">
-                {editingRecord.payments.map((payment) => {
-                  const balance = record.amount - payment.amountPaid;
+              <p>Type: {record.type}</p>
 
-                  const status = getStatus(payment.amountPaid, record.amount);
+              <p>
+                Deadline:{" "}
+                {record.deadline
+                  ? new Date(record.deadline).toLocaleDateString()
+                  : "N/A"}
+              </p>
 
-                  return (
-                    <div key={payment._id} className="border rounded p-3">
-                      <p className="font-medium">{payment.member?.name}</p>
+              <div className="mt-4 border-t pt-3 text-sm space-y-1">
+                <p>
+                  Expected:{" "}
+                  <span className="font-semibold">
+                    Ksh {summary.expectedAmount}
+                  </span>
+                </p>
 
-                      <div className="mt-2">
-                        <label className="block text-sm">Amount Paid</label>
+                <p>
+                  Collected:{" "}
+                  <span className="text-green-600 font-semibold">
+                    Ksh {summary.collectedAmount}
+                  </span>
+                </p>
 
-                        <input
-                          type="number"
-                          max={record.amount}
-                          value={payment.amountPaid || ""}
-                          onChange={(e) => {
-                            const value =
-                              e.target.value === ""
-                                ? ""
-                                : Number(e.target.value);
+                <p>
+                  Outstanding:{" "}
+                  <span className="text-red-600 font-semibold">
+                    Ksh {summary.outstandingAmount}
+                  </span>
+                </p>
+              </div>
 
-                            if (value !== "" && value > record.amount) {
-                              alert(
-                                `Amount paid cannot exceed Ksh ${record.amount}`,
-                              );
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                  Paid: {summary.paidMembers}
+                </span>
 
-                              return;
-                            }
+                <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
+                  Partial: {summary.partialMembers}
+                </span>
 
-                            const updatedPayments = editingRecord.payments.map(
-                              (p) =>
-                                p._id === payment._id
-                                  ? {
-                                      ...p,
-                                      amountPaid: value,
-                                    }
-                                  : p,
-                            );
+                <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+                  Unpaid: {summary.unpaidMembers}
+                </span>
+              </div>
 
-                            setEditingRecord({
-                              ...editingRecord,
-                              payments: updatedPayments,
-                            });
-                          }}
-                          className="border rounded p-2 w-full"
-                        />
+              <button
+                onClick={() => togglePayments(record._id)}
+                className="mt-3 text-blue-600 hover:text-blue-800"
+              >
+                {expandedRecord === record._id
+                  ? "Hide Payments"
+                  : "View Payments"}
+              </button>
+
+              <button
+                onClick={() => setEditingRecord({ ...record })}
+                className="ml-4 text-yellow-600 hover:text-yellow-800"
+              >
+                Edit Payments
+              </button>
+
+              {editingRecord?._id === record._id && (
+                <div className="mt-4 border-t pt-4 space-y-3">
+                  {editingRecord.payments.map((payment) => {
+                    const balance = record.amount - payment.amountPaid;
+
+                    const status = getStatus(payment.amountPaid, record.amount);
+
+                    return (
+                      <div key={payment._id} className="border rounded p-3">
+                        <p className="font-medium">{payment.member?.name}</p>
+
+                        <div className="mt-2">
+                          <label className="block text-sm">Amount Paid</label>
+
+                          <input
+                            type="number"
+                            max={record.amount}
+                            value={payment.amountPaid || ""}
+                            onChange={(e) => {
+                              const value =
+                                e.target.value === ""
+                                  ? ""
+                                  : Number(e.target.value);
+
+                              if (value !== "" && value > record.amount) {
+                                alert(
+                                  `Amount paid cannot exceed Ksh ${record.amount}`,
+                                );
+
+                                return;
+                              }
+
+                              const updatedPayments =
+                                editingRecord.payments.map((p) =>
+                                  p._id === payment._id
+                                    ? {
+                                        ...p,
+                                        amountPaid: value,
+                                      }
+                                    : p,
+                                );
+
+                              setEditingRecord({
+                                ...editingRecord,
+                                payments: updatedPayments,
+                              });
+                            }}
+                            className="border rounded p-2 w-full"
+                          />
+                        </div>
+
+                        <p className="text-sm mt-2">
+                          Required: Ksh {record.amount}
+                        </p>
+
+                        <p className="text-sm">Balance: Ksh {balance}</p>
+
+                        <p className="text-sm font-medium">Status: {status}</p>
+
+                        <button
+                          onClick={() => handleSavePayments(record._id)}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                        >
+                          Save Payments
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {expandedRecord === record._id && (
+                <div className="mt-4 border-t pt-4 space-y-2">
+                  {record.payments.map((payment) => (
+                    <div
+                      key={payment._id}
+                      className="flex justify-between items-center border rounded p-3"
+                    >
+                      <div>
+                        <p className="font-medium">{payment.member?.name}</p>
+
+                        <p className="text-sm text-gray-500">
+                          {payment.member?.phone}
+                        </p>
                       </div>
 
-                      <p className="text-sm mt-2">
-                        Required: Ksh {record.amount}
-                      </p>
-
-                      <p className="text-sm">Balance: Ksh {balance}</p>
-
-                      <p className="text-sm font-medium">Status: {status}</p>
-
-                      <button
-                        onClick={() => handleSavePayments(record._id)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          payment.status === "paid"
+                            ? "bg-green-100 text-green-700"
+                            : payment.status === "partial"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
+                        }`}
                       >
-                        Save Payments
-                      </button>
+                        {payment.status}
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {expandedRecord === record._id && (
-              <div className="mt-4 border-t pt-4 space-y-2">
-                {record.payments.map((payment) => (
-                  <div
-                    key={payment._id}
-                    className="flex justify-between items-center border rounded p-3"
-                  >
-                    <div>
-                      <p className="font-medium">{payment.member?.name}</p>
-
-                      <p className="text-sm text-gray-500">
-                        {payment.member?.phone}
-                      </p>
-                    </div>
-
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        payment.status === "paid"
-                          ? "bg-green-100 text-green-700"
-                          : payment.status === "partial"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {payment.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

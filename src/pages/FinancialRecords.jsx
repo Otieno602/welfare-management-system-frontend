@@ -13,6 +13,7 @@ const FinancialRecords = () => {
 
   const [expandedRecord, setExpandedRecord] = useState(null);
   const [editingRecord, setEditingRecord] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const API_URL = "http://localhost:5000/api/financial-records";
 
@@ -123,6 +124,12 @@ const FinancialRecords = () => {
     };
   };
 
+  const filteredRecords = records.filter(
+    (record) =>
+      record.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      record.type.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
   return (
     <div className="p-4 max-w-5xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Financial Records</h1>
@@ -179,10 +186,18 @@ const FinancialRecords = () => {
         </button>
       </form>
 
+      <input
+        type="text"
+        placeholder="Search financial records..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full border rounded p-2 mb-4"
+      />
+
       {/* Records */}
 
       <div className="space-y-4">
-        {records.map((record) => {
+        {filteredRecords.map((record) => {
           const summary = calculateSummary(record);
 
           return (

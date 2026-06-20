@@ -242,7 +242,12 @@ const FinancialRecords = () => {
         </button>
       </div>
 
-      {/* Records */}
+       {/* Record Counter */}
+      <p className="text-sm text-gray-500 mb-4">
+        Showing {filteredRecords.length} record(s)
+      </p>
+
+      {/* Records List*/}
 
       <div className="space-y-4">
         {filteredRecords.map((record) => {

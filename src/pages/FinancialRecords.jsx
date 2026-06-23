@@ -15,6 +15,8 @@ const FinancialRecords = () => {
   const [editingRecord, setEditingRecord] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [editingFinancialRecord, setEditingFinancialRecord] = useState(null);
+  const [editLoading, setEditLoading] = useState(false);
 
   const API_URL = "http://localhost:5000/api/financial-records";
 
@@ -136,6 +138,25 @@ const FinancialRecords = () => {
     return matchesSearch && matchesFilter;
   });
 
+  const handleRecordUpdate = async () => {
+    try {
+      setEditLoading(true);
+
+      await axios.put(
+        `${API_URL}/${editingFinancialRecord._id}`,
+        editingFinancialRecord,
+      );
+
+      await fetchRecords();
+
+      setEditingFinancialRecord(null);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
   return (
     <div className="p-4 max-w-5xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Financial Records</h1>
@@ -242,7 +263,7 @@ const FinancialRecords = () => {
         </button>
       </div>
 
-       {/* Record Counter */}
+      {/* Record Counter */}
       <p className="text-sm text-gray-500 mb-4">
         Showing {filteredRecords.length} record(s)
       </p>
@@ -324,6 +345,17 @@ const FinancialRecords = () => {
                 Edit Payments
               </button>
 
+              <button
+                onClick={() =>
+                  setEditingFinancialRecord({
+                    ...record,
+                  })
+                }
+                className="ml-4 text-red-600 hover:text-red-800"
+              >
+                Edit Record
+              </button>
+
               {editingRecord?._id === record._id && (
                 <div className="mt-4 border-t pt-4 space-y-3">
                   {editingRecord.payments.map((payment) => {
@@ -392,6 +424,62 @@ const FinancialRecords = () => {
                       </div>
                     );
                   })}
+                </div>
+              )}
+
+              {editingFinancialRecord?._id === record._id && (
+                <div className="mt-4 border-t pt-4 space-y-3">
+                  <input
+                    type="text"
+                    value={editingFinancialRecord.title}
+                    onChange={(e) =>
+                      setEditingFinancialRecord({
+                        ...editingFinancialRecord,
+                        title: e.target.value,
+                      })
+                    }
+                    className="w-full border p-2 rounded"
+                  />
+
+                  <input
+                    type="number"
+                    value={editingFinancialRecord.amount || ""}
+                    onChange={(e) =>
+                      setEditingFinancialRecord({
+                        ...editingFinancialRecord,
+                        amount: Number(e.target.value),
+                      })
+                    }
+                    className="w-full border p-2 rounded"
+                  />
+
+                  <input
+                    type="date"
+                    value={
+                      editingFinancialRecord.deadline
+                        ? editingFinancialRecord.deadline.split("T")[0]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      setEditingFinancialRecord({
+                        ...editingFinancialRecord,
+                        deadline: e.target.value,
+                      })
+                    }
+                    className="w-full border p-2 rounded"
+                  />
+
+                  <button
+                    onClick={handleRecordUpdate}
+                    disabled={editLoading}
+                    className={`px-4 py-2 rounded text-white ${
+                      editLoading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    }`}
+                  >
+                    {editLoading ? "Saving..." : "Save Changes"}
+                  </button>
                 </div>
               )}
 

@@ -4,6 +4,7 @@ import Members from "./pages/Members";
 import Attendance from "./pages/Attendance";
 import AttendanceHistory from "./pages/AttendanceHistory";
 import FinancialRecords from "./pages/FinancialRecords";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -60,7 +61,8 @@ function App() {
 
         {/* Pages */}
         <Routes>
-          <Route path="/" element={<Members />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/members" element={<Members />} />
 
           <Route
             path="/attendance"

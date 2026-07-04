@@ -1,85 +1,35 @@
-import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import Members from "./pages/Members";
 import Attendance from "./pages/Attendance";
 import AttendanceHistory from "./pages/AttendanceHistory";
 import FinancialRecords from "./pages/FinancialRecords";
 import Dashboard from "./pages/Dashboard";
+import Layout from "./components/Layout";
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
 
-        {/* Navigation */}
-        <nav className="bg-white shadow-sm border-b px-4 py-3 flex gap-4">
-          
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-gray-600"
-            }
-          >
-            Members
-          </NavLink>
-
-          <NavLink
-            to="/attendance"
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-gray-600"
-            }
-          >
-            Attendance
-          </NavLink>
-
-          <NavLink
-            to="/attendance-history"
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 font-semibold"
-                : "text-gray-600"
-            }
-          >
-            History
-          </NavLink>
-
-          <NavLink to="/financial-records"
-                   className={({ isActive }) =>
-                      isActive
-                        ? "text-blue-600 font-semibold"
-                        : "text-gray-600"
-                   }
-          >
-            Financial Records
-          </NavLink>
-
-        </nav>
-
         {/* Pages */}
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/members" element={<Members />} />
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
 
-          <Route
-            path="/attendance"
-            element={<Attendance />}
-          />
+            <Route path="/members" element={<Members />} />
 
-          <Route
-            path="/attendance-history"
-            element={<AttendanceHistory />}
-          />
+            <Route path="/attendance" element={<Attendance />} />
 
-          <Route
-            path="/financial-records"
-            element={<FinancialRecords />}
-          />
-        </Routes>
+            <Route path="/attendance-history" element={<AttendanceHistory />} />
 
+            <Route path="/financial-records" element={<FinancialRecords />} />
+          </Routes>
+        </Layout>
       </div>
     </Router>
   );

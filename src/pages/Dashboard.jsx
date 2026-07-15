@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import PaymentStatusChart from "../components/charts/PaymentStatusChart";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [financialRecords, setFinancialRecords] = useState([]);
 
   const API_URL = "http://localhost:5000/api/dashboard";
+  const FINANCIAL_API = "http://localhost:5000/api/financial-records";
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const res = await axios.get(API_URL);
-        setStats(res.data);
+        console.log(res.data);
+        setDashboardData(res.data);
+
+        const financialRes = await axios.get(FINANCIAL_API);
+
+        setFinancialRecords(financialRes.data);
       } catch (error) {
         console.error(error);
       }
@@ -19,76 +27,52 @@ const Dashboard = () => {
     fetchStats();
   }, []);
 
-  if (!stats) {
-    return (
-      <div className="p-6 text-center">
-        Loading Dashboard...
-      </div>
-    );
+  if (!dashboardData) {
+    return <div className="p-6 text-center">Loading Dashboard...</div>;
   }
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">
-        Dashboard
-      </h1>
+      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
         <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">
-            Total Members
-          </h2>
-          <p className="text-3xl font-bold">
-            {stats.totalMembers}
-          </p>
+          <h2 className="text-gray-500">Total Members</h2>
+          <p className="text-3xl font-bold">{dashboardData.summary.totalMembers}</p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">
-            Total Meetings
-          </h2>
-          <p className="text-3xl font-bold">
-            {stats.totalMeetings}
-          </p>
+          <h2 className="text-gray-500">Total Meetings</h2>
+          <p className="text-3xl font-bold">{dashboardData.summary.totalMeetings}</p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">
-            Attendance Rate
-          </h2>
-          <p className="text-3xl font-bold">
-            {stats.attendanceRate}%
-          </p>
+          <h2 className="text-gray-500">Attendance Rate</h2>
+          <p className="text-3xl font-bold">{dashboardData.summary.attendanceRate}%</p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">
-            Financial Records
-          </h2>
-          <p className="text-3xl font-bold">
-            {stats.totalFinancialRecords}
-          </p>
+          <h2 className="text-gray-500">Financial Records</h2>
+          <p className="text-3xl font-bold">{dashboardData.summary.totalFinancialRecords}</p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">
-            Amount Collected
-          </h2>
+          <h2 className="text-gray-500">Amount Collected</h2>
           <p className="text-3xl font-bold text-green-600">
-            Ksh {stats.totalCollected}
+            Ksh {dashboardData.summary.totalCollected}
           </p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">
-            Outstanding Amount
-          </h2>
+          <h2 className="text-gray-500">Outstanding Amount</h2>
           <p className="text-3xl font-bold text-red-600">
-            Ksh {stats.totalOutstanding}
+            Ksh {dashboardData.summary.totalOutstanding}
           </p>
         </div>
+      </div>
 
+      <div className="mt-8">
+        <PaymentStatusChart records={dashboardData.financialRecords} />
       </div>
     </div>
   );

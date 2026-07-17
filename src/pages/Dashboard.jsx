@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import PaymentStatusChart from "../components/charts/PaymentStatusChart";
+import AttendanceTrendChart from "../components/charts/AttendanceTrendChart";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -38,22 +39,30 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-white shadow rounded-lg p-5">
           <h2 className="text-gray-500">Total Members</h2>
-          <p className="text-3xl font-bold">{dashboardData.summary.totalMembers}</p>
+          <p className="text-3xl font-bold">
+            {dashboardData.summary.totalMembers}
+          </p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
           <h2 className="text-gray-500">Total Meetings</h2>
-          <p className="text-3xl font-bold">{dashboardData.summary.totalMeetings}</p>
+          <p className="text-3xl font-bold">
+            {dashboardData.summary.totalMeetings}
+          </p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
           <h2 className="text-gray-500">Attendance Rate</h2>
-          <p className="text-3xl font-bold">{dashboardData.summary.attendanceRate}%</p>
+          <p className="text-3xl font-bold">
+            {dashboardData.summary.attendanceRate}%
+          </p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
           <h2 className="text-gray-500">Financial Records</h2>
-          <p className="text-3xl font-bold">{dashboardData.summary.totalFinancialRecords}</p>
+          <p className="text-3xl font-bold">
+            {dashboardData.summary.totalFinancialRecords}
+          </p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
@@ -73,6 +82,10 @@ const Dashboard = () => {
 
       <div className="mt-8">
         <PaymentStatusChart records={dashboardData.financialRecords} />
+      </div>
+
+      <div className="mt-8">
+        <AttendanceTrendChart data={dashboardData.attendanceTrend} />
       </div>
     </div>
   );

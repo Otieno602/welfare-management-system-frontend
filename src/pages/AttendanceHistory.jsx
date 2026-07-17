@@ -5,6 +5,7 @@ const AttendanceHistory = () => {
   const [meetings, setMeetings] = useState([]);
   const [expandedMeeting, setExpandedMeeting] = useState(null);
   const [editingMeeting, setEditingMeeting] = useState(null);
+  const [editLoading, setEditLoading] = useState(false);
 
   const API_URL = "http://localhost:5000/api/meetings";
 

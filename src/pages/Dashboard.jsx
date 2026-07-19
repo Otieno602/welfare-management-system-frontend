@@ -2,24 +2,20 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import PaymentStatusChart from "../components/charts/PaymentStatusChart";
 import AttendanceTrendChart from "../components/charts/AttendanceTrendChart";
+import MonthlyCollectionsChart from "../components/charts/MonthlyCollectionsChart";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
-  const [financialRecords, setFinancialRecords] = useState([]);
 
   const API_URL = "http://localhost:5000/api/dashboard";
-  const FINANCIAL_API = "http://localhost:5000/api/financial-records";
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const res = await axios.get(API_URL);
         console.log(res.data);
+        console.log("Monthly Collections:", res.data.monthlyCollections);
         setDashboardData(res.data);
-
-        const financialRes = await axios.get(FINANCIAL_API);
-
-        setFinancialRecords(financialRes.data);
       } catch (error) {
         console.error(error);
       }
@@ -86,6 +82,10 @@ const Dashboard = () => {
 
       <div className="mt-8">
         <AttendanceTrendChart data={dashboardData.attendanceTrend} />
+      </div>
+
+      <div className="mt-8">
+        <MonthlyCollectionsChart data={dashboardData.monthlyCollections} />
       </div>
     </div>
   );

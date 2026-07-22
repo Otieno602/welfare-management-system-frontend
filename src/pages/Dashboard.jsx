@@ -3,6 +3,7 @@ import axios from "axios";
 import PaymentStatusChart from "../components/charts/PaymentStatusChart";
 import AttendanceTrendChart from "../components/charts/AttendanceTrendChart";
 import MonthlyCollectionsChart from "../components/charts/MonthlyCollectionsChart";
+import OutstandingMembers from "../components/dashboard/OutstandingMembers";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -86,6 +87,10 @@ const Dashboard = () => {
 
       <div className="mt-8">
         <MonthlyCollectionsChart data={dashboardData.monthlyCollections} />
+      </div>
+
+      <div className="mt-8">
+        <OutstandingMembers members={dashboardData.outstandingMembers} />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import PaymentStatusChart from "../components/charts/PaymentStatusChart";
 import AttendanceTrendChart from "../components/charts/AttendanceTrendChart";
 import MonthlyCollectionsChart from "../components/charts/MonthlyCollectionsChart";
 import OutstandingMembers from "../components/dashboard/OutstandingMembers";
+import RecentMeetings from "../components/dashboard/RecentMeetings";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -91,6 +92,10 @@ const Dashboard = () => {
 
       <div className="mt-8">
         <OutstandingMembers members={dashboardData.outstandingMembers} />
+      </div>
+
+      <div className="mt-8">
+        <RecentMeetings meetings={dashboardData.recentMeetings} />
       </div>
     </div>
   );

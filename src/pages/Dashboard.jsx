@@ -5,6 +5,15 @@ import AttendanceTrendChart from "../components/charts/AttendanceTrendChart";
 import MonthlyCollectionsChart from "../components/charts/MonthlyCollectionsChart";
 import OutstandingMembers from "../components/dashboard/OutstandingMembers";
 import RecentMeetings from "../components/dashboard/RecentMeetings";
+import SummaryCard from "../components/dashboard/SummaryCard";
+import {
+  FaUsers,
+  FaClipboardList,
+  FaMoneyBillWave,
+  FaExclamationTriangle,
+} from "react-icons/fa";
+
+import { MdEventAvailable } from "react-icons/md";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -31,70 +40,68 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+    <div className="p-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">Total Members</h2>
-          <p className="text-3xl font-bold">
-            {dashboardData.summary.totalMembers}
-          </p>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">Total Meetings</h2>
-          <p className="text-3xl font-bold">
-            {dashboardData.summary.totalMeetings}
-          </p>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">Attendance Rate</h2>
-          <p className="text-3xl font-bold">
-            {dashboardData.summary.attendanceRate}%
-          </p>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">Financial Records</h2>
-          <p className="text-3xl font-bold">
-            {dashboardData.summary.totalFinancialRecords}
-          </p>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">Amount Collected</h2>
-          <p className="text-3xl font-bold text-green-600">
-            Ksh {dashboardData.summary.totalCollected}
-          </p>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-5">
-          <h2 className="text-gray-500">Outstanding Amount</h2>
-          <p className="text-3xl font-bold text-red-600">
-            Ksh {dashboardData.summary.totalOutstanding}
-          </p>
-        </div>
+        <p className="text-gray-500 mt-2">
+          Welcome back 👋 Here's what's happening in your welfare today.
+        </p>
       </div>
 
-      <div className="mt-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        <SummaryCard
+          title="Members"
+          value={dashboardData.summary.totalMembers}
+          icon={<FaUsers className="text-blue-500" />}
+        />
+
+        <SummaryCard
+          title="Meetings"
+          value={dashboardData.summary.totalMeetings}
+          icon={<FaClipboardList className="text-green-500" />}
+        />
+
+        <SummaryCard
+          title="Attendance"
+          value={`${dashboardData.summary.attendanceRate}%`}
+          icon={<MdEventAvailable className="text-purple-500" />}
+        />
+
+        <SummaryCard
+          title="Financial Records"
+          value={dashboardData.summary.totalFinancialRecords}
+          icon={<FaClipboardList className="text-orange-500" />}
+        />
+
+        <SummaryCard
+          title="Collected"
+          value={`Ksh ${dashboardData.summary.totalCollected.toLocaleString()}`}
+          valueColor="text-green-600"
+          icon={<FaMoneyBillWave className="text-green-500" />}
+        />
+
+        <SummaryCard
+          title="Outstanding"
+          value={`Ksh ${dashboardData.summary.totalOutstanding.toLocaleString()}`}
+          valueColor="text-red-600"
+          icon={<FaExclamationTriangle className="text-red-500" />}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-8">
         <PaymentStatusChart records={dashboardData.financialRecords} />
-      </div>
 
-      <div className="mt-8">
         <AttendanceTrendChart data={dashboardData.attendanceTrend} />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6">
         <MonthlyCollectionsChart data={dashboardData.monthlyCollections} />
       </div>
 
-      <div className="mt-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
         <OutstandingMembers members={dashboardData.outstandingMembers} />
-      </div>
 
-      <div className="mt-8">
         <RecentMeetings meetings={dashboardData.recentMeetings} />
       </div>
     </div>

@@ -3,7 +3,11 @@ const OutstandingMembers = ({ members = [] }) => {
   if (!members.length) {
     return (
       <div className="bg-white rounded-xl shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Outstanding Members</h2>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Outstanding Members
+          </h2>
+        </div>
 
         <p className="text-green-600">🎉 Everyone is fully paid.</p>
       </div>
@@ -11,10 +15,14 @@ const OutstandingMembers = ({ members = [] }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <h2 className="text-xl font-semibold mb-4">Outstanding Members</h2>
+    <div className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 p-6">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-xl font-semibold text-gray-800">
+          Outstanding Members
+        </h2>
+      </div>
 
-      <p className="text-xs text-gray-400 mt-4 text-center">
+      <p className="text-sm text-gray-500 mb-4">
         Showing top 5 outstanding members
       </p>
 

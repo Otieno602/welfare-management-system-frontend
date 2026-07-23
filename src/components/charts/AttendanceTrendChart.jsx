@@ -10,38 +10,26 @@ import {
 
 const AttendanceTrendChart = ({ data }) => {
   return (
-    <div className="bg-white rounded-xl shadow p-6">
+    <div className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Attendance Trends
+          </h2>
+        </div>
 
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold">
-          Attendance Trend
-        </h2>
-
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 mb-4">
           Attendance percentage per meeting
         </p>
-      </div>
 
-      <ResponsiveContainer
-        width="100%"
-        height={320}
-      >
+      <ResponsiveContainer width="100%" height={320}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
 
           <XAxis dataKey="meeting" />
 
-          <YAxis
-            domain={[0, 100]}
-            unit="%"
-          />
+          <YAxis domain={[0, 100]} unit="%" />
 
-          <Tooltip
-            formatter={(value) => [
-              `${value}%`,
-              "Attendance",
-            ]}
-          />
+          <Tooltip formatter={(value) => [`${value}%`, "Attendance"]} />
 
           <Line
             type="monotone"
@@ -51,7 +39,6 @@ const AttendanceTrendChart = ({ data }) => {
           />
         </LineChart>
       </ResponsiveContainer>
-
     </div>
   );
 };

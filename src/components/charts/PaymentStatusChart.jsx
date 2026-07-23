@@ -44,14 +44,16 @@ const PaymentStatusChart = ({ records }) => {
   ].filter((item) => item.value > 0);
 
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold">Overall Payment Status</h2>
+    <div className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Payment Status
+          </h2>
+        </div>
 
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 mb-4">
           Distribution of payment records across all financial contributions.
         </p>
-      </div>
 
       <ResponsiveContainer width="100%" height={320}>
         <PieChart>

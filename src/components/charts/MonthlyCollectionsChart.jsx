@@ -10,14 +10,16 @@ import {
 
 const MonthlyCollectionsChart = ({ data }) => {
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold">Monthly Collections</h2>
+    <div className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Monthly Collections
+          </h2>
+        </div>
 
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 mb-4">
           Total money collected each month
         </p>
-      </div>
 
       <ResponsiveContainer width="100%" height={320}>
         <BarChart data={data}>

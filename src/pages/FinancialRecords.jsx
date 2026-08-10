@@ -17,6 +17,7 @@ const FinancialRecords = () => {
   const [filterType, setFilterType] = useState("all");
   const [editingFinancialRecord, setEditingFinancialRecord] = useState(null);
   const [editLoading, setEditLoading] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const API_URL = "http://localhost:5000/api/financial-records";
 
@@ -49,6 +50,8 @@ const FinancialRecords = () => {
         amount: Number(form.amount),
         appliesToAll: form.type !== "fine",
       });
+
+      setShowCreateForm(false);
 
       setForm({
         title: "",
@@ -159,114 +162,149 @@ const FinancialRecords = () => {
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Financial Records</h1>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-800">
+            Financial Records
+          </h1>
+
+          <p className="text-gray-500 mt-2">
+            Manage welfare contributions, payments and outstanding balances.
+          </p>
+        </div>
+      </div>
 
       {/* Form */}
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white border rounded-lg p-4 mb-6 space-y-3"
-      >
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={form.title}
-          onChange={handleChange}
-          className="w-full border rounded p-2"
-          required
-        />
+      <div className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 p-6 mb-8">
+        <div className="flex items-center justify-center mb-4">
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+          >
+            {showCreateForm ? "Cancel" : "+ New Contribution"}
+          </button>
+        </div>
 
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          value={form.amount}
-          onChange={handleChange}
-          className="w-full border rounded p-2"
-          required
-        />
-
-        <select
-          name="type"
-          value={form.type}
-          onChange={handleChange}
-          className="w-full border rounded p-2"
-        >
-          <option value="monthly">Monthly Contribution</option>
-
-          <option value="special">Special Contribution</option>
-
-          <option value="fine">Fine</option>
-        </select>
-
-        <input
-          type="date"
-          name="deadline"
-          value={form.deadline}
-          onChange={handleChange}
-          className="w-full border rounded p-2"
-        />
-
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-          Create Record
-        </button>
-      </form>
-
-      {/* Search Bar */}
-
-      <input
-        type="text"
-        placeholder="Search financial records..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full border rounded p-2 mb-4"
-      />
-
-      {/* Filter Buttons */}
-
-      <div className="flex flex-wrap gap-2 mb-4">
-        <button
-          onClick={() => setFilterType("all")}
-          className={`px-4 py-2 rounded ${
-            filterType === "all" ? "bg-blue-500 text-white" : "bg-gray-200"
+        <div
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            showCreateForm
+              ? "max-h-[600px] opacity-100 mt-4"
+              : "max-h-0 opacity-0"
           }`}
         >
-          All
-        </button>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* your existing form fields */}
+             <input
+              type="text"
+              name="title"
+              placeholder="Title"
+              value={form.title}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+              required
+            />
 
-        <button
-          onClick={() => setFilterType("monthly")}
-          className={`px-4 py-2 rounded ${
-            filterType === "monthly" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-        >
-          Monthly
-        </button>
+            <input
+              type="number"
+              name="amount"
+              placeholder="Amount"
+              value={form.amount}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+              required
+            />
 
-        <button
-          onClick={() => setFilterType("special")}
-          className={`px-4 py-2 rounded ${
-            filterType === "special" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-        >
-          Special
-        </button>
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            >
+              <option value="monthly">Monthly Contribution</option>
 
-        <button
-          onClick={() => setFilterType("fine")}
-          className={`px-4 py-2 rounded ${
-            filterType === "fine" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-        >
-          Fines
-        </button>
+              <option value="special">Special Contribution</option>
+
+              <option value="fine">Fine</option>
+            </select>
+
+            <input
+              type="date"
+              name="deadline"
+              value={form.deadline}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            />
+
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+              Create Contribution
+            </button>
+          </form>
+        </div>
+
+        
       </div>
 
-      {/* Record Counter */}
-      <p className="text-sm text-gray-500 mb-4">
-        Showing {filteredRecords.length} record(s)
-      </p>
+      <div className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 p-6 mb-8">
+        {/* Search Bar */}
+
+        <input
+          type="text"
+          placeholder="Search by title or contribution type..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full border rounded p-2 mb-4"
+        />
+
+        {/* Filter Buttons */}
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          <button
+            onClick={() => setFilterType("all")}
+            className={`px-4 py-2 rounded ${
+              filterType === "all" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            All
+          </button>
+
+          <button
+            onClick={() => setFilterType("monthly")}
+            className={`px-4 py-2 rounded ${
+              filterType === "monthly"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
+            }`}
+          >
+            Monthly
+          </button>
+
+          <button
+            onClick={() => setFilterType("special")}
+            className={`px-4 py-2 rounded ${
+              filterType === "special"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
+            }`}
+          >
+            Special
+          </button>
+
+          <button
+            onClick={() => setFilterType("fine")}
+            className={`px-4 py-2 rounded ${
+              filterType === "fine" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            Fines
+          </button>
+        </div>
+
+        {/* Record Counter */}
+        <p className="text-sm text-gray-500 mb-4">
+          Showing {filteredRecords.length} record(s)
+        </p>
+      </div>
 
       {/* Records List*/}
 
@@ -277,19 +315,36 @@ const FinancialRecords = () => {
           return (
             <div
               key={record._id}
-              className="border rounded-lg p-4 bg-white shadow-sm"
+              className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 border border-gray-100 p-6"
             >
               <h2 className="font-semibold text-lg">{record.title}</h2>
 
-              <p>Amount: Ksh {record.amount}</p>
+              <p className="text-3xl font-bold text-gray-800 mt-3">
+                Ksh {record.amount.toLocaleString()}
+              </p>
 
-              <p>Type: {record.type}</p>
+              <span
+                className={`
+                inline-flex
+                px-3
+                py-1
+                rounded-full
+                text-xs
+                font-semibold
+                ${
+                  record.type === "monthly"
+                    ? "bg-green-100 text-green-700"
+                    : record.type === "special"
+                      ? "bg-purple-100 text-purple-700"
+                      : "bg-red-100 text-red-700"
+                }
+                `}
+              >
+                {record.type.charAt(0).toUpperCase() + record.type.slice(1)}
+              </span>
 
-              <p>
-                Deadline:{" "}
-                {record.deadline
-                  ? new Date(record.deadline).toLocaleDateString()
-                  : "N/A"}
+              <p className="text-sm text-gray-500 mt-2">
+                Deadline: {new Date(record.deadline).toLocaleDateString()}
               </p>
 
               <div className="mt-4 border-t pt-3 text-sm space-y-1">

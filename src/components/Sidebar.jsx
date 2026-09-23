@@ -19,7 +19,7 @@ const Sidebar = ({
   return (
     <aside
       className={`
-        fixed top-0 left-0 h-screen bg-gray-800 text-white
+        fixed top-0 left-0 h-screen bg-welfare-sidebar text-white
         transition-all duration-300 z-50
           ${
             isMobile
@@ -33,7 +33,7 @@ const Sidebar = ({
         `}
     >
       {/* Header */}
-      <div className="p-4 border-b border-gray-700 flex items-center justify-between">
+      <div className="p-4 border-b border-welfare-sidebarHover flex items-center justify-between">
         {!collapsed && (
           <div>
             <h2 className="text-2xl font-bold">WelfareHub</h2>
@@ -43,7 +43,7 @@ const Sidebar = ({
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-2xl hover:text-blue-400 transition"
+          className="text-2xl text-gray-300 hover:text-welfare-primary transition"
         >
           ☰
         </button>

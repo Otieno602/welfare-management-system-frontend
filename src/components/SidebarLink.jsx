@@ -10,8 +10,8 @@ const SidebarLink = ({ to, icon, label, collapsed, onClick }) => {
           collapsed ? "justify-center" : "gap-3"
         } p-2 rounded-lg transition-all duration-200 ${
           isActive
-            ? "bg-blue-600 text-white"
-            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+            ? "bg-welfare-primary text-white shadow-sm"
+            : "text-gray-300 hover:bg-welfare-sidebarHover hover:text-white"
         }`
       }
     >

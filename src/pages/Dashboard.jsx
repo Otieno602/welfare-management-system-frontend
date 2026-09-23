@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+
 import PaymentStatusChart from "../components/charts/PaymentStatusChart";
 import AttendanceTrendChart from "../components/charts/AttendanceTrendChart";
 import MonthlyCollectionsChart from "../components/charts/MonthlyCollectionsChart";
 import OutstandingMembers from "../components/dashboard/OutstandingMembers";
 import RecentMeetings from "../components/dashboard/RecentMeetings";
 import SummaryCard from "../components/dashboard/SummaryCard";
+
 import {
   FaUsers,
   FaClipboardList,
@@ -24,8 +26,13 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         const res = await axios.get(API_URL);
+
         console.log(res.data);
-        console.log("Monthly Collections:", res.data.monthlyCollections);
+        console.log(
+          "Monthly Collections:",
+          res.data.monthlyCollections
+        );
+
         setDashboardData(res.data);
       } catch (error) {
         console.error(error);
@@ -36,73 +43,101 @@ const Dashboard = () => {
   }, []);
 
   if (!dashboardData) {
-    return <div className="p-6 text-center">Loading Dashboard...</div>;
+    return (
+      <div className="min-h-screen bg-welfare-background flex items-center justify-center p-6">
+        <p className="text-welfare-text-secondary">
+          Loading Dashboard...
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
+    <div className="min-h-screen bg-welfare-background p-6 md:p-8">
+      <div className="max-w-7xl mx-auto">
 
-        <p className="text-gray-500 mt-2">
-          Welcome back 👋 Here's what's happening in your welfare today.
-        </p>
-      </div>
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-welfare-text-primary">
+            Dashboard
+          </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-        <SummaryCard
-          title="Members"
-          value={dashboardData.summary.totalMembers}
-          icon={<FaUsers className="text-blue-500" />}
-        />
+          <p className="text-welfare-text-secondary mt-2">
+            Welcome back. Here's what's happening in your welfare today.
+          </p>
+        </div>
 
-        <SummaryCard
-          title="Meetings"
-          value={dashboardData.summary.totalMeetings}
-          icon={<FaClipboardList className="text-green-500" />}
-        />
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+          <SummaryCard
+            title="Members"
+            value={dashboardData.summary.totalMembers}
+            icon={<FaUsers />}
+          />
 
-        <SummaryCard
-          title="Attendance"
-          value={`${dashboardData.summary.attendanceRate}%`}
-          icon={<MdEventAvailable className="text-purple-500" />}
-        />
+          <SummaryCard
+            title="Meetings"
+            value={dashboardData.summary.totalMeetings}
+            icon={<FaClipboardList />}
+          />
 
-        <SummaryCard
-          title="Financial Records"
-          value={dashboardData.summary.totalFinancialRecords}
-          icon={<FaClipboardList className="text-orange-500" />}
-        />
+          <SummaryCard
+            title="Attendance"
+            value={`${dashboardData.summary.attendanceRate}%`}
+            icon={<MdEventAvailable />}
+          />
 
-        <SummaryCard
-          title="Collected"
-          value={`Ksh ${dashboardData.summary.totalCollected.toLocaleString()}`}
-          valueColor="text-green-600"
-          icon={<FaMoneyBillWave className="text-green-500" />}
-        />
+          <SummaryCard
+            title="Financial Records"
+            value={dashboardData.summary.totalFinancialRecords}
+            icon={<FaClipboardList />}
+          />
 
-        <SummaryCard
-          title="Outstanding"
-          value={`Ksh ${dashboardData.summary.totalOutstanding.toLocaleString()}`}
-          valueColor="text-red-600"
-          icon={<FaExclamationTriangle className="text-red-500" />}
-        />
-      </div>
+          <SummaryCard
+            title="Collected"
+            value={`Ksh ${dashboardData.summary.totalCollected.toLocaleString()}`}
+            valueColor="text-welfare-success"
+            icon={<FaMoneyBillWave />}
+            iconColor="text-welfare-success"
+          />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-8">
-        <PaymentStatusChart records={dashboardData.financialRecords} />
+          <SummaryCard
+            title="Outstanding"
+            value={`Ksh ${dashboardData.summary.totalOutstanding.toLocaleString()}`}
+            valueColor="text-welfare-danger"
+            icon={<FaExclamationTriangle />}
+            iconColor="text-welfare-danger"
+          />
+        </div>
 
-        <AttendanceTrendChart data={dashboardData.attendanceTrend} />
-      </div>
+        {/* Charts */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 md:gap-6 mt-6 md:mt-8">
+          <PaymentStatusChart
+            records={dashboardData.financialRecords}
+          />
 
-      <div className="mt-6">
-        <MonthlyCollectionsChart data={dashboardData.monthlyCollections} />
-      </div>
+          <AttendanceTrendChart
+            data={dashboardData.attendanceTrend}
+          />
+        </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-        <OutstandingMembers members={dashboardData.outstandingMembers} />
+        <div className="mt-5 md:mt-6">
+          <MonthlyCollectionsChart
+            data={dashboardData.monthlyCollections}
+          />
+        </div>
 
-        <RecentMeetings meetings={dashboardData.recentMeetings} />
+        {/* Dashboard Lists */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 md:gap-6 mt-5 md:mt-6">
+          <OutstandingMembers
+            members={dashboardData.outstandingMembers}
+          />
+
+          <RecentMeetings
+            meetings={dashboardData.recentMeetings}
+          />
+        </div>
+
       </div>
     </div>
   );

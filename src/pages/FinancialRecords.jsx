@@ -15,7 +15,8 @@ const FinancialRecords = () => {
   const [editingRecord, setEditingRecord] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [editingFinancialRecord, setEditingFinancialRecord] = useState(null);
+  const [editingFinancialRecord, setEditingFinancialRecord] =
+    useState(null);
   const [editLoading, setEditLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -67,7 +68,9 @@ const FinancialRecords = () => {
   };
 
   const togglePayments = (recordId) => {
-    setExpandedRecord((prev) => (prev === recordId ? null : recordId));
+    setExpandedRecord((prev) =>
+      prev === recordId ? null : recordId
+    );
   };
 
   const getStatus = (amountPaid, requiredAmount) => {
@@ -80,10 +83,15 @@ const FinancialRecords = () => {
 
   const handleSavePayments = async (recordId) => {
     try {
-      const updatedPayments = editingRecord.payments.map((payment) => ({
-        ...payment,
-        status: getStatus(payment.amountPaid, editingRecord.amount),
-      }));
+      const updatedPayments = editingRecord.payments.map(
+        (payment) => ({
+          ...payment,
+          status: getStatus(
+            payment.amountPaid,
+            editingRecord.amount
+          ),
+        })
+      );
 
       await axios.put(`${API_URL}/${recordId}`, {
         ...editingRecord,
@@ -91,7 +99,6 @@ const FinancialRecords = () => {
       });
 
       fetchRecords();
-
       setEditingRecord(null);
     } catch (error) {
       console.error(error);
@@ -99,25 +106,28 @@ const FinancialRecords = () => {
   };
 
   const calculateSummary = (record) => {
-    const expectedAmount = record.amount * record.payments.length;
+    const expectedAmount =
+      record.amount * record.payments.length;
 
     const collectedAmount = record.payments.reduce(
-      (total, payment) => total + (payment.amountPaid || 0),
-      0,
+      (total, payment) =>
+        total + (payment.amountPaid || 0),
+      0
     );
 
-    const outstandingAmount = expectedAmount - collectedAmount;
+    const outstandingAmount =
+      expectedAmount - collectedAmount;
 
     const paidMembers = record.payments.filter(
-      (payment) => payment.status === "paid",
+      (payment) => payment.status === "paid"
     ).length;
 
     const partialMembers = record.payments.filter(
-      (payment) => payment.status === "partial",
+      (payment) => payment.status === "partial"
     ).length;
 
     const unpaidMembers = record.payments.filter(
-      (payment) => payment.status === "unpaid",
+      (payment) => payment.status === "unpaid"
     ).length;
 
     return {
@@ -132,11 +142,17 @@ const FinancialRecords = () => {
 
   const filteredRecords = records.filter((record) => {
     const matchesSearch =
-      record.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.type.toLowerCase().includes(searchTerm.toLowerCase());
+      record.title
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      record.type
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
     const matchesFilter =
-      filterType === "all" ? true : record.type === filterType;
+      filterType === "all"
+        ? true
+        : record.type === filterType;
 
     return matchesSearch && matchesFilter;
   });
@@ -147,7 +163,7 @@ const FinancialRecords = () => {
 
       await axios.put(
         `${API_URL}/${editingFinancialRecord._id}`,
-        editingFinancialRecord,
+        editingFinancialRecord
       );
 
       await fetchRecords();
@@ -161,416 +177,725 @@ const FinancialRecords = () => {
   };
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-bold text-gray-800">
+    <div className="min-h-screen bg-welfare-background p-6 md:p-8">
+      <div className="max-w-7xl mx-auto">
+
+        {/* =====================================================
+            PAGE HEADER
+        ====================================================== */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-welfare-text-primary">
             Financial Records
           </h1>
 
-          <p className="text-gray-500 mt-2">
-            Manage welfare contributions, payments and outstanding balances.
+          <p className="text-welfare-text-secondary mt-2">
+            Manage welfare contributions, payments and
+            outstanding balances.
           </p>
         </div>
-      </div>
 
-      {/* Form */}
-
-      <div className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 p-6 mb-8">
-        <div className="flex items-center justify-center mb-4">
+        {/* =====================================================
+            CREATE CONTRIBUTION
+        ====================================================== */}
+        <div className="mb-6">
           <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+            onClick={() =>
+              setShowCreateForm(!showCreateForm)
+            }
+            className="bg-welfare-primary hover:bg-welfare-primaryDark text-white px-5 py-2.5 rounded-lg font-medium shadow-sm hover:shadow transition-all duration-200"
           >
-            {showCreateForm ? "Cancel" : "+ New Contribution"}
+            {showCreateForm
+              ? "Cancel"
+              : "+ New Contribution"}
           </button>
         </div>
 
+        {/* Create Form */}
         <div
           className={`overflow-hidden transition-all duration-500 ease-in-out ${
             showCreateForm
-              ? "max-h-[600px] opacity-100 mt-4"
+              ? "max-h-[700px] opacity-100 mb-6"
               : "max-h-0 opacity-0"
           }`}
         >
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* your existing form fields */}
-             <input
-              type="text"
-              name="title"
-              placeholder="Title"
-              value={form.title}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-              required
-            />
+          <div className="bg-welfare-surface border border-welfare-border rounded-xl shadow-sm p-5 md:p-6">
 
-            <input
-              type="number"
-              name="amount"
-              placeholder="Amount"
-              value={form.amount}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-              required
-            />
+            <div className="mb-5">
+              <h2 className="text-lg md:text-xl font-semibold text-welfare-text-primary">
+                New Contribution
+              </h2>
 
-            <select
-              name="type"
-              value={form.type}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            >
-              <option value="monthly">Monthly Contribution</option>
-
-              <option value="special">Special Contribution</option>
-
-              <option value="fine">Fine</option>
-            </select>
-
-            <input
-              type="date"
-              name="deadline"
-              value={form.deadline}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-              Create Contribution
-            </button>
-          </form>
-        </div>
-
-        
-      </div>
-
-      <div className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 p-6 mb-8">
-        {/* Search Bar */}
-
-        <input
-          type="text"
-          placeholder="Search by title or contribution type..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full border rounded p-2 mb-4"
-        />
-
-        {/* Filter Buttons */}
-
-        <div className="flex flex-wrap gap-2 mb-4">
-          <button
-            onClick={() => setFilterType("all")}
-            className={`px-4 py-2 rounded ${
-              filterType === "all" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            All
-          </button>
-
-          <button
-            onClick={() => setFilterType("monthly")}
-            className={`px-4 py-2 rounded ${
-              filterType === "monthly"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            Monthly
-          </button>
-
-          <button
-            onClick={() => setFilterType("special")}
-            className={`px-4 py-2 rounded ${
-              filterType === "special"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            Special
-          </button>
-
-          <button
-            onClick={() => setFilterType("fine")}
-            className={`px-4 py-2 rounded ${
-              filterType === "fine" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            Fines
-          </button>
-        </div>
-
-        {/* Record Counter */}
-        <p className="text-sm text-gray-500 mb-4">
-          Showing {filteredRecords.length} record(s)
-        </p>
-      </div>
-
-      {/* Records List*/}
-
-      <div className="space-y-4">
-        {filteredRecords.map((record) => {
-          const summary = calculateSummary(record);
-
-          return (
-            <div
-              key={record._id}
-              className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 border border-gray-100 p-6"
-            >
-              <h2 className="font-semibold text-lg">{record.title}</h2>
-
-              <p className="text-3xl font-bold text-gray-800 mt-3">
-                Ksh {record.amount.toLocaleString()}
+              <p className="text-sm text-welfare-text-secondary mt-1">
+                Create a contribution or fine for the
+                welfare group.
               </p>
+            </div>
 
-              <span
-                className={`
-                inline-flex
-                px-3
-                py-1
-                rounded-full
-                text-xs
-                font-semibold
-                ${
-                  record.type === "monthly"
-                    ? "bg-green-100 text-green-700"
-                    : record.type === "special"
-                      ? "bg-purple-100 text-purple-700"
-                      : "bg-red-100 text-red-700"
-                }
-                `}
-              >
-                {record.type.charAt(0).toUpperCase() + record.type.slice(1)}
-              </span>
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4"
+            >
 
-              <p className="text-sm text-gray-500 mt-2">
-                Deadline: {new Date(record.deadline).toLocaleDateString()}
-              </p>
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-medium text-welfare-text-secondary mb-1.5">
+                  Title
+                </label>
 
-              <div className="mt-4 border-t pt-3 text-sm space-y-1">
-                <p>
-                  Expected:{" "}
-                  <span className="font-semibold">
-                    Ksh {summary.expectedAmount}
-                  </span>
-                </p>
-
-                <p>
-                  Collected:{" "}
-                  <span className="text-green-600 font-semibold">
-                    Ksh {summary.collectedAmount}
-                  </span>
-                </p>
-
-                <p>
-                  Outstanding:{" "}
-                  <span className="text-red-600 font-semibold">
-                    Ksh {summary.outstandingAmount}
-                  </span>
-                </p>
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="e.g. September Contribution"
+                  value={form.title}
+                  onChange={handleChange}
+                  className="w-full border border-welfare-border bg-welfare-surface px-3 py-2.5 rounded-lg text-welfare-text-primary placeholder:text-welfare-text-muted focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition"
+                  required
+                />
               </div>
 
-              <div className="flex flex-wrap gap-2 mt-3">
-                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                  Paid: {summary.paidMembers}
-                </span>
+              {/* Amount */}
+              <div>
+                <label className="block text-sm font-medium text-welfare-text-secondary mb-1.5">
+                  Amount
+                </label>
 
-                <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
-                  Partial: {summary.partialMembers}
-                </span>
-
-                <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
-                  Unpaid: {summary.unpaidMembers}
-                </span>
+                <input
+                  type="number"
+                  name="amount"
+                  placeholder="Enter amount"
+                  value={form.amount}
+                  onChange={handleChange}
+                  className="w-full border border-welfare-border bg-welfare-surface px-3 py-2.5 rounded-lg text-welfare-text-primary placeholder:text-welfare-text-muted focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition"
+                  required
+                />
               </div>
 
-              <button
-                onClick={() => togglePayments(record._id)}
-                className="mt-3 text-blue-600 hover:text-blue-800"
-              >
-                {expandedRecord === record._id
-                  ? "Hide Payments"
-                  : "View Payments"}
-              </button>
+              {/* Type */}
+              <div>
+                <label className="block text-sm font-medium text-welfare-text-secondary mb-1.5">
+                  Contribution Type
+                </label>
 
-              <button
-                onClick={() => setEditingRecord({ ...record })}
-                className="ml-4 text-yellow-600 hover:text-yellow-800"
-              >
-                Edit Payments
-              </button>
+                <select
+                  name="type"
+                  value={form.type}
+                  onChange={handleChange}
+                  className="w-full border border-welfare-border bg-welfare-surface px-3 py-2.5 rounded-lg text-welfare-text-primary focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition"
+                >
+                  <option value="monthly">
+                    Monthly Contribution
+                  </option>
 
+                  <option value="special">
+                    Special Contribution
+                  </option>
+
+                  <option value="fine">
+                    Fine
+                  </option>
+                </select>
+              </div>
+
+              {/* Deadline */}
+              <div>
+                <label className="block text-sm font-medium text-welfare-text-secondary mb-1.5">
+                  Deadline
+                </label>
+
+                <input
+                  type="date"
+                  name="deadline"
+                  value={form.deadline}
+                  onChange={handleChange}
+                  className="w-full border border-welfare-border bg-welfare-surface px-3 py-2.5 rounded-lg text-welfare-text-primary focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="bg-welfare-primary hover:bg-welfare-primaryDark text-white px-5 py-2.5 rounded-lg font-medium shadow-sm hover:shadow transition-all duration-200"
+                >
+                  Create Contribution
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* =====================================================
+            SEARCH & FILTERS
+        ====================================================== */}
+        <div className="bg-welfare-surface border border-welfare-border rounded-xl shadow-sm p-5 md:p-6 mb-6">
+
+          <div className="mb-5">
+            <h2 className="text-lg md:text-xl font-semibold text-welfare-text-primary">
+              Find Contributions
+            </h2>
+
+            <p className="text-sm text-welfare-text-secondary mt-1">
+              Search or filter your financial records.
+            </p>
+          </div>
+
+          {/* Search */}
+          <input
+            type="text"
+            placeholder="Search by title or contribution type..."
+            value={searchTerm}
+            onChange={(e) =>
+              setSearchTerm(e.target.value)
+            }
+            className="w-full border border-welfare-border bg-welfare-surface px-4 py-3 rounded-xl text-welfare-text-primary placeholder:text-welfare-text-muted focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition shadow-sm"
+          />
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2 mt-4">
+
+            {[
+              { value: "all", label: "All" },
+              { value: "monthly", label: "Monthly" },
+              { value: "special", label: "Special" },
+              { value: "fine", label: "Fines" },
+            ].map((filter) => (
               <button
+                key={filter.value}
                 onClick={() =>
-                  setEditingFinancialRecord({
-                    ...record,
-                  })
+                  setFilterType(filter.value)
                 }
-                className="ml-4 text-red-600 hover:text-red-800"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  filterType === filter.value
+                    ? "bg-welfare-primary text-white"
+                    : "bg-welfare-primaryLight text-welfare-primary hover:bg-welfare-primaryLight"
+                }`}
               >
-                Edit Record
+                {filter.label}
               </button>
+            ))}
 
-              {editingRecord?._id === record._id && (
-                <div className="mt-4 border-t pt-4 space-y-3">
-                  {editingRecord.payments.map((payment) => {
-                    const balance = record.amount - payment.amountPaid;
+          </div>
 
-                    const status = getStatus(payment.amountPaid, record.amount);
+          <p className="text-sm text-welfare-text-secondary mt-4">
+            Showing {filteredRecords.length}{" "}
+            {filteredRecords.length === 1
+              ? "record"
+              : "records"}
+          </p>
+        </div>
 
-                    return (
-                      <div key={payment._id} className="border rounded p-3">
-                        <p className="font-medium">{payment.member?.name}</p>
+        {/* =====================================================
+            RECORDS
+        ====================================================== */}
+        <div className="space-y-5">
 
-                        <div className="mt-2">
-                          <label className="block text-sm">Amount Paid</label>
+          {filteredRecords.length === 0 ? (
+            <div className="bg-welfare-surface border border-welfare-border rounded-xl shadow-sm p-8 md:p-12 text-center">
+
+              <div className="w-14 h-14 mx-auto rounded-full bg-welfare-primaryLight flex items-center justify-center text-2xl mb-4">
+                {records.length === 0 ? "💰" : "🔎"}
+              </div>
+
+              <h3 className="text-lg font-semibold text-welfare-text-primary">
+                {records.length === 0
+                  ? "No financial records yet"
+                  : "No records found"}
+              </h3>
+
+              <p className="text-sm text-welfare-text-secondary mt-1">
+                {records.length === 0
+                  ? "Create your first contribution to start tracking welfare finances."
+                  : "Try changing your search or filter."}
+              </p>
+            </div>
+          ) : (
+            filteredRecords.map((record) => {
+              const summary = calculateSummary(record);
+
+              return (
+                <div
+                  key={record._id}
+                  className="bg-welfare-surface border border-welfare-border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-5 md:p-6"
+                >
+
+                  {/* =================================================
+                      RECORD HEADER
+                  ================================================== */}
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+
+                    <div className="min-w-0">
+                      <h2 className="text-lg md:text-xl font-semibold text-welfare-text-primary">
+                        {record.title}
+                      </h2>
+
+                      <p className="text-sm text-welfare-text-secondary mt-1">
+                        Deadline:{" "}
+                        {record.deadline
+                          ? new Date(
+                              record.deadline
+                            ).toLocaleDateString()
+                          : "No deadline"}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`self-start inline-flex px-3 py-1 rounded-full text-xs font-semibold capitalize ${
+                        record.type === "fine"
+                          ? "bg-red-50 text-welfare-danger"
+                          : "bg-welfare-primaryLight text-welfare-primary"
+                      }`}
+                    >
+                      {record.type}
+                    </span>
+                  </div>
+
+                  {/* =================================================
+                      AMOUNT
+                  ================================================== */}
+                  <p className="text-2xl md:text-3xl font-bold text-welfare-text-primary mt-4">
+                    Ksh {record.amount.toLocaleString()}
+                  </p>
+
+                  {/* =================================================
+                      FINANCIAL SUMMARY
+                  ================================================== */}
+                  <div className="mt-5 pt-4 border-t border-welfare-border grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-welfare-text-muted">
+                        Expected
+                      </p>
+
+                      <p className="text-sm font-semibold text-welfare-text-primary mt-1">
+                        Ksh{" "}
+                        {summary.expectedAmount.toLocaleString()}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-welfare-text-muted">
+                        Collected
+                      </p>
+
+                      <p className="text-sm font-semibold text-welfare-success mt-1">
+                        Ksh{" "}
+                        {summary.collectedAmount.toLocaleString()}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-welfare-text-muted">
+                        Outstanding
+                      </p>
+
+                      <p className="text-sm font-semibold text-welfare-danger mt-1">
+                        Ksh{" "}
+                        {summary.outstandingAmount.toLocaleString()}
+                      </p>
+                    </div>
+
+                  </div>
+
+                  {/* =================================================
+                      PAYMENT STATUS
+                  ================================================== */}
+                  <div className="flex flex-wrap gap-2 mt-5">
+
+                    <span className="bg-green-50 text-welfare-success px-3 py-1.5 rounded-full text-xs font-semibold">
+                      Paid: {summary.paidMembers}
+                    </span>
+
+                    <span className="bg-orange-50 text-welfare-warning px-3 py-1.5 rounded-full text-xs font-semibold">
+                      Partial: {summary.partialMembers}
+                    </span>
+
+                    <span className="bg-red-50 text-welfare-danger px-3 py-1.5 rounded-full text-xs font-semibold">
+                      Unpaid: {summary.unpaidMembers}
+                    </span>
+
+                  </div>
+
+                  {/* =================================================
+                      ACTIONS
+                  ================================================== */}
+                  <div className="flex flex-wrap gap-x-5 gap-y-2 mt-5 pt-4 border-t border-welfare-border">
+
+                    <button
+                      onClick={() =>
+                        togglePayments(record._id)
+                      }
+                      className="text-sm font-medium text-welfare-primary hover:text-welfare-primaryDark transition-colors"
+                    >
+                      {expandedRecord === record._id
+                        ? "Hide Payments"
+                        : "View Payments"}
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        setEditingRecord({ ...record })
+                      }
+                      className="text-sm font-medium text-welfare-primary hover:text-welfare-primaryDark transition-colors"
+                    >
+                      Edit Payments
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        setEditingFinancialRecord({
+                          ...record,
+                        })
+                      }
+                      className="text-sm font-medium text-welfare-text-secondary hover:text-welfare-text-primary transition-colors"
+                    >
+                      Edit Record
+                    </button>
+
+                  </div>
+
+                  {/* =================================================
+                      EDIT PAYMENTS
+                  ================================================== */}
+                  {editingRecord?._id === record._id && (
+                    <div className="mt-5 pt-5 border-t border-welfare-border">
+
+                      <div className="mb-4">
+                        <h3 className="text-base font-semibold text-welfare-text-primary">
+                          Edit Payments
+                        </h3>
+
+                        <p className="text-sm text-welfare-text-secondary mt-1">
+                          Update the amount paid for each member.
+                        </p>
+                      </div>
+
+                      <div className="space-y-3">
+
+                        {editingRecord.payments.map(
+                          (payment) => {
+                            const balance =
+                              record.amount -
+                              payment.amountPaid;
+
+                            const status = getStatus(
+                              payment.amountPaid,
+                              record.amount
+                            );
+
+                            return (
+                              <div
+                                key={payment._id}
+                                className="border border-welfare-border rounded-xl p-4 bg-welfare-background"
+                              >
+
+                                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+
+                                  <div>
+                                    <p className="font-semibold text-welfare-text-primary">
+                                      {payment.member?.name}
+                                    </p>
+
+                                    <p className="text-sm text-welfare-text-secondary mt-1">
+                                      {payment.member?.phone ||
+                                        "No phone number"}
+                                    </p>
+                                  </div>
+
+                                  <span
+                                    className={`self-start px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${
+                                      status === "paid"
+                                        ? "bg-green-50 text-welfare-success"
+                                        : status === "partial"
+                                        ? "bg-orange-50 text-welfare-warning"
+                                        : "bg-red-50 text-welfare-danger"
+                                    }`}
+                                  >
+                                    {status}
+                                  </span>
+
+                                </div>
+
+                                <div className="mt-4">
+                                  <label className="block text-sm font-medium text-welfare-text-secondary mb-1.5">
+                                    Amount Paid
+                                  </label>
+
+                                  <input
+                                    type="number"
+                                    max={record.amount}
+                                    value={
+                                      payment.amountPaid || ""
+                                    }
+                                    onChange={(e) => {
+                                      const value =
+                                        e.target.value === ""
+                                          ? ""
+                                          : Number(
+                                              e.target.value
+                                            );
+
+                                      if (
+                                        value !== "" &&
+                                        value > record.amount
+                                      ) {
+                                        alert(
+                                          `Amount paid cannot exceed Ksh ${record.amount}`
+                                        );
+
+                                        return;
+                                      }
+
+                                      const updatedPayments =
+                                        editingRecord.payments.map(
+                                          (p) =>
+                                            p._id ===
+                                            payment._id
+                                              ? {
+                                                  ...p,
+                                                  amountPaid:
+                                                    value,
+                                                }
+                                              : p
+                                        );
+
+                                      setEditingRecord({
+                                        ...editingRecord,
+                                        payments:
+                                          updatedPayments,
+                                      });
+                                    }}
+                                    className="w-full border border-welfare-border bg-welfare-surface px-3 py-2.5 rounded-lg text-welfare-text-primary focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition"
+                                  />
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+
+                                  <div className="bg-welfare-surface border border-welfare-border rounded-lg p-3">
+                                    <p className="text-xs text-welfare-text-muted">
+                                      Required
+                                    </p>
+
+                                    <p className="text-sm font-semibold text-welfare-text-primary mt-1">
+                                      Ksh{" "}
+                                      {record.amount.toLocaleString()}
+                                    </p>
+                                  </div>
+
+                                  <div className="bg-welfare-surface border border-welfare-border rounded-lg p-3">
+                                    <p className="text-xs text-welfare-text-muted">
+                                      Balance
+                                    </p>
+
+                                    <p
+                                      className={`text-sm font-semibold mt-1 ${
+                                        balance > 0
+                                          ? "text-welfare-danger"
+                                          : "text-welfare-success"
+                                      }`}
+                                    >
+                                      Ksh{" "}
+                                      {Number(
+                                        balance
+                                      ).toLocaleString()}
+                                    </p>
+                                  </div>
+
+                                </div>
+
+                                <button
+                                  onClick={() =>
+                                    handleSavePayments(
+                                      record._id
+                                    )
+                                  }
+                                  className="mt-4 bg-welfare-primary hover:bg-welfare-primaryDark text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm transition"
+                                >
+                                  Save Payments
+                                </button>
+                              </div>
+                            );
+                          }
+                        )}
+
+                      </div>
+                    </div>
+                  )}
+
+                  {/* =================================================
+                      EDIT FINANCIAL RECORD
+                  ================================================== */}
+                  {editingFinancialRecord?._id ===
+                    record._id && (
+                    <div className="mt-5 pt-5 border-t border-welfare-border">
+
+                      <div className="mb-4">
+                        <h3 className="text-base font-semibold text-welfare-text-primary">
+                          Edit Record
+                        </h3>
+
+                        <p className="text-sm text-welfare-text-secondary mt-1">
+                          Update the contribution details.
+                        </p>
+                      </div>
+
+                      <div className="space-y-4">
+
+                        <div>
+                          <label className="block text-sm font-medium text-welfare-text-secondary mb-1.5">
+                            Title
+                          </label>
 
                           <input
-                            type="number"
-                            max={record.amount}
-                            value={payment.amountPaid || ""}
-                            onChange={(e) => {
-                              const value =
-                                e.target.value === ""
-                                  ? ""
-                                  : Number(e.target.value);
-
-                              if (value !== "" && value > record.amount) {
-                                alert(
-                                  `Amount paid cannot exceed Ksh ${record.amount}`,
-                                );
-
-                                return;
-                              }
-
-                              const updatedPayments =
-                                editingRecord.payments.map((p) =>
-                                  p._id === payment._id
-                                    ? {
-                                        ...p,
-                                        amountPaid: value,
-                                      }
-                                    : p,
-                                );
-
-                              setEditingRecord({
-                                ...editingRecord,
-                                payments: updatedPayments,
-                              });
-                            }}
-                            className="border rounded p-2 w-full"
+                            type="text"
+                            value={
+                              editingFinancialRecord.title
+                            }
+                            onChange={(e) =>
+                              setEditingFinancialRecord({
+                                ...editingFinancialRecord,
+                                title: e.target.value,
+                              })
+                            }
+                            className="w-full border border-welfare-border bg-welfare-surface px-3 py-2.5 rounded-lg text-welfare-text-primary focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition"
                           />
                         </div>
 
-                        <p className="text-sm mt-2">
-                          Required: Ksh {record.amount}
-                        </p>
+                        <div>
+                          <label className="block text-sm font-medium text-welfare-text-secondary mb-1.5">
+                            Amount
+                          </label>
 
-                        <p className="text-sm">Balance: Ksh {balance}</p>
+                          <input
+                            type="number"
+                            value={
+                              editingFinancialRecord.amount ||
+                              ""
+                            }
+                            onChange={(e) =>
+                              setEditingFinancialRecord({
+                                ...editingFinancialRecord,
+                                amount: Number(
+                                  e.target.value
+                                ),
+                              })
+                            }
+                            className="w-full border border-welfare-border bg-welfare-surface px-3 py-2.5 rounded-lg text-welfare-text-primary focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition"
+                          />
+                        </div>
 
-                        <p className="text-sm font-medium">Status: {status}</p>
+                        <div>
+                          <label className="block text-sm font-medium text-welfare-text-secondary mb-1.5">
+                            Deadline
+                          </label>
+
+                          <input
+                            type="date"
+                            value={
+                              editingFinancialRecord.deadline
+                                ? editingFinancialRecord.deadline.split(
+                                    "T"
+                                  )[0]
+                                : ""
+                            }
+                            onChange={(e) =>
+                              setEditingFinancialRecord({
+                                ...editingFinancialRecord,
+                                deadline: e.target.value,
+                              })
+                            }
+                            className="w-full border border-welfare-border bg-welfare-surface px-3 py-2.5 rounded-lg text-welfare-text-primary focus:outline-none focus:ring-2 focus:ring-welfare-primary/30 focus:border-welfare-primary transition"
+                          />
+                        </div>
 
                         <button
-                          onClick={() => handleSavePayments(record._id)}
-                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                          onClick={handleRecordUpdate}
+                          disabled={editLoading}
+                          className={`px-5 py-2.5 rounded-lg text-sm font-medium text-white shadow-sm transition ${
+                            editLoading
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-welfare-primary hover:bg-welfare-primaryDark"
+                          }`}
                         >
-                          Save Payments
+                          {editLoading
+                            ? "Saving..."
+                            : "Save Changes"}
                         </button>
+
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                    </div>
+                  )}
 
-              {editingFinancialRecord?._id === record._id && (
-                <div className="mt-4 border-t pt-4 space-y-3">
-                  <input
-                    type="text"
-                    value={editingFinancialRecord.title}
-                    onChange={(e) =>
-                      setEditingFinancialRecord({
-                        ...editingFinancialRecord,
-                        title: e.target.value,
-                      })
-                    }
-                    className="w-full border p-2 rounded"
-                  />
+                  {/* =================================================
+                      VIEW PAYMENTS
+                  ================================================== */}
+                  {expandedRecord === record._id && (
+                    <div className="mt-5 pt-5 border-t border-welfare-border">
 
-                  <input
-                    type="number"
-                    value={editingFinancialRecord.amount || ""}
-                    onChange={(e) =>
-                      setEditingFinancialRecord({
-                        ...editingFinancialRecord,
-                        amount: Number(e.target.value),
-                      })
-                    }
-                    className="w-full border p-2 rounded"
-                  />
+                      <div className="mb-4">
+                        <h3 className="text-base font-semibold text-welfare-text-primary">
+                          Payment Details
+                        </h3>
 
-                  <input
-                    type="date"
-                    value={
-                      editingFinancialRecord.deadline
-                        ? editingFinancialRecord.deadline.split("T")[0]
-                        : ""
-                    }
-                    onChange={(e) =>
-                      setEditingFinancialRecord({
-                        ...editingFinancialRecord,
-                        deadline: e.target.value,
-                      })
-                    }
-                    className="w-full border p-2 rounded"
-                  />
-
-                  <button
-                    onClick={handleRecordUpdate}
-                    disabled={editLoading}
-                    className={`px-4 py-2 rounded text-white ${
-                      editLoading
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-500 hover:bg-blue-600"
-                    }`}
-                  >
-                    {editLoading ? "Saving..." : "Save Changes"}
-                  </button>
-                </div>
-              )}
-
-              {expandedRecord === record._id && (
-                <div className="mt-4 border-t pt-4 space-y-2">
-                  {record.payments.map((payment) => (
-                    <div
-                      key={payment._id}
-                      className="flex justify-between items-center border rounded p-3"
-                    >
-                      <div>
-                        <p className="font-medium">{payment.member?.name}</p>
-
-                        <p className="text-sm text-gray-500">
-                          {payment.member?.phone}
+                        <p className="text-sm text-welfare-text-secondary mt-1">
+                          Payment status for each member.
                         </p>
                       </div>
 
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${
-                          payment.status === "paid"
-                            ? "bg-green-100 text-green-700"
-                            : payment.status === "partial"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {payment.status}
-                      </span>
+                      <div className="space-y-2">
+
+                        {record.payments.map(
+                          (payment) => (
+                            <div
+                              key={payment._id}
+                              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-welfare-border rounded-xl p-4 bg-welfare-background"
+                            >
+
+                              <div>
+                                <p className="font-semibold text-welfare-text-primary">
+                                  {payment.member?.name}
+                                </p>
+
+                                <p className="text-sm text-welfare-text-secondary mt-1">
+                                  {payment.member?.phone ||
+                                    "No phone number"}
+                                </p>
+
+                                <p className="text-xs text-welfare-text-muted mt-1">
+                                  Paid: Ksh{" "}
+                                  {Number(
+                                    payment.amountPaid || 0
+                                  ).toLocaleString()}
+                                </p>
+                              </div>
+
+                              <span
+                                className={`self-start sm:self-auto px-3 py-1 rounded-full text-xs font-semibold capitalize ${
+                                  payment.status ===
+                                  "paid"
+                                    ? "bg-green-50 text-welfare-success"
+                                    : payment.status ===
+                                      "partial"
+                                    ? "bg-orange-50 text-welfare-warning"
+                                    : "bg-red-50 text-welfare-danger"
+                                }`}
+                              >
+                                {payment.status}
+                              </span>
+
+                            </div>
+                          )
+                        )}
+
+                      </div>
                     </div>
-                  ))}
+                  )}
+
                 </div>
-              )}
-            </div>
-          );
-        })}
+              );
+            })
+          )}
+
+        </div>
+
       </div>
     </div>
   );

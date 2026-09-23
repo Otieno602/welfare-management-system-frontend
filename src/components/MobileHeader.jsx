@@ -1,10 +1,10 @@
 const MobileHeader = ({ onMenuClick }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-gray-800 text-white flex items-center justify-between px-4 shadow-md z-40 md:hidden">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-welfare-sidebar text-white flex items-center justify-between px-4 shadow-md z-40 md:hidden">
       {/* Hamburger Button */}
       <button
         onClick={onMenuClick}
-        className="text-2xl hover:text-blue-400 transition"
+        className="text-2xl hover:text-welfare-primary transition"
       >
         ☰
       </button>

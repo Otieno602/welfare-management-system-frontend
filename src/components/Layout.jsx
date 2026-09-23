@@ -53,7 +53,7 @@ const Layout = ({ children }) => {
       <main
         className={`
           min-h-screen
-          bg-gray-100
+          bg-welfare-background
           transition-all
           duration-300
           ${
